@@ -118,7 +118,6 @@ const gameLoop = () => {
     game.ball.direction.x = game.ball.direction.x * -1;
     // speed up ball
     game.ball.speed += game.ball.speed_inc
-    console.log("Speed new: ", game.ball.speed)
     game.score++;
     // increase score
     score.innerText = game.score;
