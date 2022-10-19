@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pong Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+    .arena {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: rgb(86, 139, 156);
+      border: 10px solid #ccc;
+    }
+
+    .bar {
+      width: 20px;
+      height: 80px;
+      position: absolute;
+      background:rgb(148, 185, 197);
+      border: rgb(86, 139, 156)
+    }
+
+    .bar1 {
+      left: 0;
+    }
+
+    .bar2 {
+      right: 0;
+    }
+
+    .ball {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      background-color: aquamarine;
+      border: 2px solid darkblue;
+    }
+  </style>
+  <script defer src="script.js"></script>
+</head>
+
+<body>
+
+  <div class="arena">
+    <div class="panel">Score: <span class="score">0</span></div>
+    <div class="bar bar1"></div>
+    <div class="bar bar2"></div>
+    <div class="ball"></div>
+  </div>
+
+</body>
+
+</html>
