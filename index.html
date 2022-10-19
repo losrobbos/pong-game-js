@@ -46,6 +46,22 @@
       background-color: aquamarine;
       border: 2px solid darkblue;
     }
+
+    .panel {
+      text-align: center;
+    }
+
+    .status {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      
+      text-align: center;
+      font-size: 3rem;
+      font-weight: bold;
+      background-color: antiquewhite;
+    }
   </style>
   <script defer src="script.js"></script>
 </head>
@@ -53,10 +69,11 @@
 <body>
 
   <div class="arena">
-    <div class="panel">Score: <span class="score">0</span></div>
     <div class="bar bar1"></div>
     <div class="bar bar2"></div>
     <div class="ball"></div>
+    <div class="panel">Score: <span class="score">0</span></div>
+    <div class="status">START (press p)</div>
   </div>
 
 </body>

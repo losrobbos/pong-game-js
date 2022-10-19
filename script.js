@@ -1,8 +1,9 @@
 const game = {
+  score: 0,
+  paused: true,
   player: {
     speed: 10, // speed in pixels per keystroke
     active: null, // l = left | r = right
-    score: 0,
   },
   ball: {
     speed: 2,
@@ -15,6 +16,7 @@ const player1 = document.querySelector(".bar1");
 const player2 = document.querySelector(".bar2");
 const ball = document.querySelector(".ball");
 const score = document.querySelector(".score");
+const gameStatus = document.querySelector(".status");
 
 game.player.active = player1;
 
@@ -55,8 +57,16 @@ const isColliding = (el1, el2) => {
 window.onkeydown = (e) => {
   const playerActive = game.player.active;
   let playerXPos;
+  console.log(e.key)
 
   switch (e.key) {
+
+    // pause / resume game
+    case "p":
+      game.paused = !game.paused
+      gameStatus.innerText = game.paused ? "Resume (p)" : ""
+      break;
+
     // move player (up / down)
     case "ArrowUp":
       playerXPos = getTopXPos(playerActive);
@@ -89,6 +99,9 @@ window.onkeydown = (e) => {
 
 
 const gameLoop = () => {
+
+  if(game.paused) return requestAnimationFrame(gameLoop);
+
   // move ball
   const leftPos = getLeftPos(ball);
   ball.style.left = `${leftPos + game.ball.speed * game.ball.direction}px`;
@@ -96,17 +109,25 @@ const gameLoop = () => {
   // check out of scene
   const { left, right } = getComputedStyle(ball);
 
+  if(parseInt(left) <= 0 || parseInt(right) <= 0) {
+    game.score--
+    score.innerText = game.score
+    // re-move to center
+    ball.style.left = "50%";
+    return requestAnimationFrame(gameLoop);
+  }
+
   // check collision with player
   const isCollidingWithPlayer =
     isColliding(ball, player1) || isColliding(ball, player2);
-  // console.log({ left, right })
 
   // collision with player!
   if (isCollidingWithPlayer) {
     // change direction!
     game.ball.direction = game.ball.direction * -1;
+    game.score++
     // increase score
-    score.innerText = parseInt(score.innerText) + 1;
+    score.innerText = game.score;
   }
 
   // continue ball movement...
