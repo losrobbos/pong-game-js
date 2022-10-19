@@ -1,3 +1,5 @@
+import { getBottomXPos, getLeftPos, getTopXPos, isColliding } from "./lib.js";
+
 const game = {
   score: 0,
   paused: true,
@@ -6,8 +8,12 @@ const game = {
     active: null, // l = left | r = right
   },
   ball: {
-    speed: 2,
-    direction: -1,
+    speed: 3,
+    speed_inc: 0.2,
+    direction: { 
+      x: -1, 
+      y: -0.25 
+    }
   },
 };
 
@@ -20,51 +26,23 @@ const gameStatus = document.querySelector(".status");
 
 game.player.active = player1;
 
-const getTopXPos = (element) => {
-  return parseInt(getComputedStyle(element).top);
-};
-const getBottomXPos = (element) => {
-  return parseInt(getComputedStyle(element).bottom);
-};
-const getLeftPos = (element) => {
-  return parseInt(getComputedStyle(element).left);
-}
 
 // first load - place players vertically centered
 const playerHeight = player1.scrollHeight;
 player1.style.top = `calc(50% - ${playerHeight / 2}px)`;
 player2.style.top = `calc(50% - ${playerHeight / 2}px)`;
 ball.style.left = "50%"
+ball.style.top = "50%"
 
-// initialize ball movement
-const isColliding = (el1, el2) => {  
-  // collision with player? => change direction!
-  const domRect1 = el1.getBoundingClientRect();
-  const domRect2 = el2.getBoundingClientRect();
-
-  return !(
-    domRect1.top > domRect2.bottom ||
-    domRect1.right < domRect2.left ||
-    domRect1.bottom < domRect2.top ||
-    domRect1.left > domRect2.right
-  );
-
-  // collision with scene border? => reduce score, re-place at middle 
-}
-
-
-// handle player movement
-window.onkeydown = (e) => {
+const movePlayer = (e) => {
   const playerActive = game.player.active;
   let playerXPos;
-  console.log(e.key)
 
   switch (e.key) {
-
     // pause / resume game
     case "p":
-      game.paused = !game.paused
-      gameStatus.innerText = game.paused ? "Resume (p)" : ""
+      game.paused = !game.paused;
+      gameStatus.innerText = game.paused ? "Resume (p)" : "";
       break;
 
     // move player (up / down)
@@ -97,23 +75,36 @@ window.onkeydown = (e) => {
   }
 };
 
+// handle player movement
+window.onkeydown = movePlayer
 
+/**
+ * Game Loop: Move ball and check collisions
+ */
 const gameLoop = () => {
-
-  if(game.paused) return requestAnimationFrame(gameLoop);
+  if (game.paused) return requestAnimationFrame(gameLoop);
 
   // move ball
-  const leftPos = getLeftPos(ball);
-  ball.style.left = `${leftPos + game.ball.speed * game.ball.direction}px`;
+  const { left, right, top, bottom } = getComputedStyle(ball);
+  ball.style.left = `${parseFloat(left) + game.ball.speed * game.ball.direction.x}px`;
+  ball.style.top = `${parseFloat(top) + game.ball.speed * game.ball.direction.y}px`;
 
-  // check out of scene
-  const { left, right } = getComputedStyle(ball);
 
-  if(parseInt(left) <= 0 || parseInt(right) <= 0) {
-    game.score--
-    score.innerText = game.score
+  // check out of scene (left / right)
+  if (parseFloat(left) <= 0 || parseFloat(right) <= 0) {
+    game.score--;
+    score.innerText = game.score;
     // re-move to center
     ball.style.left = "50%";
+    return requestAnimationFrame(gameLoop);
+  }
+
+  // check collision with top / bottom scene
+  if(parseFloat(top) <= 0 || parseFloat(bottom) <= 0) {
+    // console.log("Hit ceiling or ground...", { top, bottom })
+    game.ball.direction.y = game.ball.direction.y * -1;
+    const topNew = parseFloat(top) + game.ball.speed * game.ball.direction.y
+    ball.style.top = `${ topNew }px`;
     return requestAnimationFrame(gameLoop);
   }
 
@@ -124,8 +115,11 @@ const gameLoop = () => {
   // collision with player!
   if (isCollidingWithPlayer) {
     // change direction!
-    game.ball.direction = game.ball.direction * -1;
-    game.score++
+    game.ball.direction.x = game.ball.direction.x * -1;
+    // speed up ball
+    game.ball.speed += game.ball.speed_inc
+    console.log("Speed new: ", game.ball.speed)
+    game.score++;
     // increase score
     score.innerText = game.score;
   }

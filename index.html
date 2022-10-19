@@ -13,18 +13,19 @@
       margin: 0;
     }
     .arena {
+      overflow: hidden;
       width: 100vw;
       height: 100vh;
       position: relative;
-      background: rgb(86, 139, 156);
-      border: 10px solid #ccc;
+      background: rgb(154, 201, 216);
+      border: 10px solid rgb(86, 139, 156);
     }
 
     .bar {
       width: 20px;
       height: 80px;
       position: absolute;
-      background:rgb(148, 185, 197);
+      background:rgb(15, 62, 78);
       border: rgb(86, 139, 156)
     }
 
@@ -41,8 +42,7 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      top: 50%;
-      translate: -50% -50%;
+      /* translate: -50% -50%; */
       background-color: aquamarine;
       border: 2px solid darkblue;
     }
@@ -63,7 +63,7 @@
       background-color: antiquewhite;
     }
   </style>
-  <script defer src="script.js"></script>
+  <script defer type="module" src="script.js"></script>
 </head>
 
 <body>
