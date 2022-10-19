@@ -49,6 +49,9 @@
 
     .panel {
       text-align: center;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
     }
 
     .status {
@@ -57,10 +60,17 @@
       left: 50%;
       translate: -50% -50%;
       
+      font-size: 2rem;
       text-align: center;
-      font-size: 3rem;
       font-weight: bold;
-      background-color: antiquewhite;
+      background-color: rgb(75, 75, 207);
+      border-radius: 20px;
+      padding: 10px;
+      color: white;
+    }
+
+    .score {
+      font-weight: bold
     }
   </style>
   <script defer type="module" src="script.js"></script>
@@ -72,8 +82,11 @@
     <div class="bar bar1"></div>
     <div class="bar bar2"></div>
     <div class="ball"></div>
-    <div class="panel">Score: <span class="score">0</span></div>
-    <div class="status">START (press p)</div>
+    <div class="panel">
+      <span>Score:</span> <span class="score">0</span>
+      <div>(Start / Resume: press p | Player Movement: Up / Down arrows)</div>
+    </div>
+    <div class="status">START<br />(press p)</div>
   </div>
 
 </body>

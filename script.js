@@ -1,21 +1,6 @@
-import { getBottomXPos, getLeftPos, getTopXPos, isColliding } from "./lib.js";
+import { createGameConfig, isColliding, movePlayer } from "./lib.js";
 
-const game = {
-  score: 0,
-  paused: true,
-  player: {
-    speed: 10, // speed in pixels per keystroke
-    active: null, // l = left | r = right
-  },
-  ball: {
-    speed: 3,
-    speed_inc: 0.2,
-    direction: { 
-      x: -1, 
-      y: -0.25 
-    }
-  },
-};
+const game = createGameConfig()
 
 // DOM nodes
 const player1 = document.querySelector(".bar1");
@@ -34,54 +19,23 @@ player2.style.top = `calc(50% - ${playerHeight / 2}px)`;
 ball.style.left = "50%"
 ball.style.top = "50%"
 
-const movePlayer = (e) => {
-  const playerActive = game.player.active;
-  let playerXPos;
-
-  switch (e.key) {
-    // pause / resume game
-    case "p":
-      game.paused = !game.paused;
-      gameStatus.innerText = game.paused ? "Resume (p)" : "";
-      break;
-
-    // move player (up / down)
-    case "ArrowUp":
-      playerXPos = getTopXPos(playerActive);
-      if (playerXPos <= 0) return;
-
-      // clear bottom pos and set top pos
-      // playerActive.style.removeProperty("bottom");
-      playerActive.style.bottom = "";
-      playerActive.style.top = playerXPos - game.player.speed + "px";
-      break;
-    case "ArrowDown":
-      playerXPos = getBottomXPos(playerActive);
-      if (playerXPos <= 0) return;
-
-      // clear top pos and set bottom pos
-      // playerActive.style.removeProperty("top");
-      playerActive.style.top = "";
-      playerActive.style.bottom = playerXPos - game.player.speed + "px";
-      break;
-
-    // switch player
-    case "ArrowLeft":
-      game.player.active = player1;
-      break;
-    case "ArrowRight":
-      game.player.active = player2;
-      break;
-  }
-};
 
 // handle player movement
-window.onkeydown = movePlayer
+window.onkeydown = (e) => movePlayer(e, game, gameStatus)
 
 /**
  * Game Loop: Move ball and check collisions
  */
 const gameLoop = () => {
+
+  // game over?
+  if(game.quitted) {
+    gameStatus.innerHTML = "<b>PLAYER QUITTED GAME</b><br />(refresh page to restart)";
+    gameStatus.style.display = "block";
+    return
+  }
+
+  // game state (paused / resume)
   if (game.paused) return requestAnimationFrame(gameLoop);
 
   // move ball
@@ -94,6 +48,15 @@ const gameLoop = () => {
   if (parseFloat(left) <= 0 || parseFloat(right) <= 0) {
     game.score--;
     score.innerText = game.score;
+
+    // lost?
+    if(game.score < 0) {
+      game.quitted = true
+      gameStatus.innerHTML = "<b>YOU LOST, BRO...</b><br />";
+      gameStatus.style.display = "block";
+      return // stop game
+    }
+
     // re-move to center
     ball.style.left = "50%";
     return requestAnimationFrame(gameLoop);
@@ -116,10 +79,16 @@ const gameLoop = () => {
   if (isCollidingWithPlayer) {
     // change direction!
     game.ball.direction.x = game.ball.direction.x * -1;
+
+    // alternate player!
+    // if(game.player.active === player1)
+    game.player.active = game.player.active === player1 ? player2 : player1;
+
     // speed up ball
-    game.ball.speed += game.ball.speed_inc
-    game.score++;
+    game.ball.speed += game.ball.speed_inc;
+
     // increase score
+    game.score++;
     score.innerText = game.score;
   }
 

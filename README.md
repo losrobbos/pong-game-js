@@ -8,3 +8,4 @@ Concepts included:
 - Movement of DOM items inside container (with top & left properties)
 - Collision detection (with container & ball with player)
 - Score increase / decrease
+- Pause / Resume Game
